@@ -1,0 +1,7 @@
+form.ui.form.large(action="/posts", method="post")
+  input(type="hidden", name="_author", value="#{user._id}")
+  .field
+    textarea(name="content", rows="2")
+
+  button.ui.right.floated.primary.submit.button Post
+    i.icon.right.chevron

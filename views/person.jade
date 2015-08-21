@@ -1,0 +1,17 @@
+extends layouts/default
+
+block content
+  
+  .ui.grid
+    .row
+      .four.wide.column
+  
+        h2 #{person.username}
+
+        .ui.statistic
+          .value #{posts.length}
+          .label posts
+      .twelve.wide.column
+        .ui.cards
+          for post in posts
+            include partials/post

@@ -1,0 +1,7 @@
+.ui.card.fluid
+  .content
+    a.right.floated(href="/people/#{post._author.slug}") #{post._author.username}
+    h3.header #{post.title}
+    .meta
+      a(href="/posts/#{post._id}") #{moment(post.created).fromNow()}
+    .description #{post.content}
