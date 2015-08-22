@@ -1,7 +1,21 @@
 form.ui.form.large(action="/posts", method="post")
   input(type="hidden", name="_author", value="#{user._id}")
-  .field
+  .field(rows="2")
     textarea(name="content", rows="2")
 
-  button.ui.right.floated.primary.submit.button Post
-    i.icon.right.chevron
+  .field.right.floated
+    button.ui.right.floated.primary.submit.button Post
+      i.icon.right.chevron
+    .ui.mini.statistic.right.floated
+      .value
+        span(data-bind="count") 0
+        span(data-bind="max") /140
+
+script.
+  $('body').on('keyup', 'textarea[name=content]', function(e) {
+    e.preventDefault();
+    var $self = $(this);
+    var count = $self.val().length;
+    $self.parent().parent().find('*[data-bind=count]').html(count);
+    return false;
+  });

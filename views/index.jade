@@ -1,8 +1,15 @@
 extends layouts/default
 
 block content
-  include forms/post-create
-  
-  .ui.posts
-    for post in posts
-      include partials/post
+  .ui.fluid.column
+    .ui.grid
+      .row
+        .column
+          if (user)
+            include forms/post-create
+
+      .row
+        .column
+          .ui.posts
+            for post in posts
+              include partials/post

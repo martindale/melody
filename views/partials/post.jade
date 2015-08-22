@@ -4,4 +4,4 @@
     h3.header #{post.title}
     .meta
       a(href="/posts/#{post._id}") #{moment(post.created).fromNow()}
-    .description #{post.content}
+    .description !{markdown(post.content)}
