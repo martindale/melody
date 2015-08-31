@@ -1,15 +1,17 @@
 form.ui.form.large(action="/posts", method="post")
   input(type="hidden", name="_author", value="#{user._id}")
+    
+  .field
+    label Title
+    input(type="text", name="title")
+    
   .field(rows="2")
+    label Content
     textarea(name="content", rows="2")
 
   .field.right.floated
     button.ui.right.floated.primary.submit.button Post
       i.icon.right.chevron
-    .ui.mini.statistic.right.floated
-      .value
-        span(data-bind="count") 0
-        span(data-bind="max") /140
 
 script.
   $('body').on('keyup', 'textarea[name=content]', function(e) {
