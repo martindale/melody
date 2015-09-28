@@ -1,0 +1,35 @@
+{
+  "name": "melody",
+  "version": "0.0.0",
+  "description": "simple publishing platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node -e \"require('./').start()\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martindale/melody.git"
+  },
+  "keywords": [
+    "maki",
+    "publish",
+    "blog",
+    "microblog",
+    "content",
+    "cms",
+    "broadcast",
+    "semantic",
+    "rest"
+  ],
+  "author": "Eric Martindale",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/martindale/melody/issues"
+  },
+  "homepage": "https://github.com/martindale/melody",
+  "dependencies": {
+    "maki": "git://github.com/martindale/maki",
+    "maki-passport-local": "0.0.4"
+  }
+}

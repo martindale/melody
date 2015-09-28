@@ -1,0 +1,19 @@
+extends layouts/default
+
+block content
+  for person in people
+    include partials/person
+    
+  .ui.segment
+    form.ui.form(action="/people", method="post")
+      .field
+        label Username
+        input(type="text", name="username")
+      .field
+        label Password
+        input(type="password", name="password")
+      
+      button.ui.right.floated.primary.submit.button Register
+        i.icon.right.chevron
+    
+    br(style="clear:both;")
