@@ -5,7 +5,7 @@ module.exports = {
     icon: 'music'
   },
   database: {
-    name: 'blog:soundtrack'
+    name: 'soundtrack'
   },
   services: {
     http: {
