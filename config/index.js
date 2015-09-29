@@ -1,6 +1,10 @@
 module.exports = {
   service: {
-    name: 'melody',
+    name: 'melodies',
+    synopsis: 'thoughts from soundtrack.io',
     icon: 'music'
+  },
+  database: {
+    name: 'blog:soundtrack'
   }
 };
