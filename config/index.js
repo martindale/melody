@@ -6,5 +6,10 @@ module.exports = {
   },
   database: {
     name: 'blog:soundtrack'
+  },
+  services: {
+    http: {
+      port: 13005
+    }
   }
 };
