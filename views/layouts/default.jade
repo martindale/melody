@@ -45,4 +45,40 @@ html.no-js
             p
               small Built with <a href="http://github.com/martindale/maki">Maki</a>.
 
+    script.
+      $(document).on('click', '*[data-intent=edit]', function(e) {
+        e.preventDefault();
+        
+        var $self = $(this);
+        
+        $.getJSON('/posts/'+$self.data('id'), function(post) {
+          var editFunction = _.debounce(submitEdits, 250);
+          
+          var $form = $('<form class="ui form"><div class="field"><textarea rows="20"></textarea></field></form>');
+          $form.find('textarea').val(post.content).on('keyup', editFunction);
+
+          $('*[data-bind='+$self.data('target')+'][data-id='+$self.data('id')+']').replaceWith($form);
+          
+          function submitEdits() {
+            var content = $form.find('textarea').val();
+            console.log('val:', content);
+            
+            $.ajax({
+              type: 'patch',
+              url: '/posts/'+$self.data('id'),
+              dataType: 'json',
+              headers: {
+                Accept: 'application/json'
+              },
+              data: {
+                content: content
+              }
+            });
+          }
+        });
+
+        
+        return false;
+      });
+
     block scripts

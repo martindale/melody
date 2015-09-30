@@ -3,9 +3,9 @@ extends layouts/default
 block content
   .ui.fluid.column
     .ui.grid
-      .row
-        .column
-          if (user)
+      if (user && user.capabilities && ~user.capabilities.indexOf('write'))
+        .row
+          .column
             include forms/post-create
 
       .row
