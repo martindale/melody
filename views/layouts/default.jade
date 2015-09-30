@@ -61,8 +61,7 @@ html.no-js
           
           function submitEdits() {
             var content = $form.find('textarea').val();
-            console.log('val:', content);
-            
+
             $.ajax({
               type: 'patch',
               url: '/posts/'+$self.data('id'),
