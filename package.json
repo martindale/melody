@@ -30,7 +30,7 @@
   "homepage": "https://github.com/martindale/melody",
   "dependencies": {
     "maki": "git://github.com/martindale/maki",
-    "maki-auth-simple": "0.0.1",
+    "maki-auth-simple": "0.1.1",
     "maki-passport-local": "0.0.4",
     "maki-remote": "0.0.1"
   }
