@@ -15,3 +15,12 @@ are available in `config/index.js` for your convenience.
 
 ## Hosting
 We strongly recommend using `pm2` to manage melody in production.
+
+## Using as a Library
+melody was built with [Maki][maki], so it can also be used as a library:
+
+```js
+var melody = require('melody');
+```
+
+[maki]: https://maki.io

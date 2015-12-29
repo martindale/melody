@@ -19,7 +19,7 @@ module.exports = {
   },
   services: {
     http: {
-      port: 13005 // you might want this to be 80, or 3000
+      port: 3000 // you might want this to be some other port, like 80
     }
   }
 };
