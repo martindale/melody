@@ -1,7 +1,14 @@
 .ui.card.fluid
   .content
-    a.right.floated(href="/people/#{post._author.slug}") #{post._author.username}
-    h3.header #{post.title}
+    .right.floated
+      .ui.buttons
+        if (user && user.capabilities && ~user.capabilities.indexOf('write'))
+          a.ui.mini.button(href="#", data-intent="edit", data-target="post-description", data-id="#{post.slug}")
+            i.icon.edit
+            | edit
+        a.ui.mini.button(href="/people/#{post._author.slug}") #{post._author.username}
+    h3.header
+      a(href="/posts/#{post.slug}") #{post.title}
     .meta
       a(href="/posts/#{post.slug}") #{moment(post.created).fromNow()}
-    .description !{markdown(post.content)}
+    .description(data-bind="post-description", data-id="#{post.slug}") !{markdown(post.content)}
