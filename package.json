@@ -4,8 +4,9 @@
   "description": "simple publishing platform",
   "main": "lib/melody.js",
   "scripts": {
-    "test": "mocha",
-    "start": "node -e \"require('./').start()\""
+    "test": "NODE_ENV=test mocha --recursive",
+    "coverage": "NODE_ENV=test istanbul cover _mocha -- --recursive",
+    "start": "node melody.js"
   },
   "repository": {
     "type": "git",
@@ -33,5 +34,10 @@
     "maki": "git://github.com/martindale/maki",
     "maki-auth-simple": "0.1.1",
     "maki-passport-local": "0.0.4"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.6",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4"
   }
 }
