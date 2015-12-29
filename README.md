@@ -14,4 +14,29 @@ Extra config values, such as character limit and allowing public registrations,
 are available in `config/index.js` for your convenience.
 
 ## Hosting
-We strongly recommend using `pm2` to manage melody in production.
+We strongly recommend using `pm2` to manage melody in production.  You can use
+the included `melody.js` to keep your instance named clearly.  To run melody
+using `pm2`, simply:
+
+`pm2 start melody.js`
+
+Which will produce the following output:
+
+```
+┌──────────┬────┬──────┬───────┬────────┬─────────┬────────┬─────────────┬──────────┐
+│ App name │ id │ mode │ pid   │ status │ restart │ uptime │ memory      │ watching │
+├──────────┼────┼──────┼───────┼────────┼─────────┼────────┼─────────────┼──────────┤
+│ melody   │ 0  │ fork │ 25957 │ online │ 0       │ 0s     │ 10.906 MB   │ disabled │
+└──────────┴────┴──────┴───────┴────────┴─────────┴────────┴─────────────┴──────────┘
+```
+
+See `pm2 help` for other instructions, such as startup scripts and monitoring.
+
+## Using as a Library
+melody was built with [Maki][maki], so it can also be used as a library:
+
+```js
+var melody = require('melody');
+```
+
+[maki]: https://maki.io
