@@ -9,7 +9,7 @@
         if (user)
           a.item(href="/people/#{user.slug}") #{user.username}
           a.item(href="/sessions/#{session.hash}?method=delete") Logout
-        else
+        else if (config.config.allowPublicRegistration)
           a.item(href="/sessions")
             i.user.icon
             | Login &raquo;
