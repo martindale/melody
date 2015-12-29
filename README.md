@@ -13,6 +13,15 @@ melody will automatically create an admin user and generate a random password.
 Extra config values, such as character limit and allowing public registrations,
 are available in `config/index.js` for your convenience.
 
+## API
+melody has a fully functional REST API, including an events API that is provided
+over WebSockets.  To see documentation, visit your melody instance's API URL:
+
+http://localhost:3000/api
+
+This API is automatically provided by [Maki][maki], the web framework used to
+build melody.
+
 ## Hosting
 We strongly recommend using `pm2` to manage melody in production.  You can use
 the included `melody.js` to keep your instance named clearly.  To run melody
