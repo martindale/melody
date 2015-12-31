@@ -4,7 +4,7 @@ melody
 [![Coverage Status](https://img.shields.io/coveralls/martindale/melody.svg?style=flat-square)](https://coveralls.io/r/martindale/melody)
 [![Community](https://chat.maki.io/badge.svg)](https://chat.maki.io/)
 
-simple, self-hosted publishing platform.
+simple, self-hosted publishing platform.  [#melody on Slack](https://maki-dev.slack.com/messages/melody/).
 
 ## Quick Start
 After running `npm install`, simply type `npm start`.  If it's your first time,
