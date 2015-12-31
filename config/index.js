@@ -17,6 +17,19 @@ module.exports = {
   database: {
     name: 'melody' // only change if you know what you're doing
   },
+  byrd: {
+    "ca": [],
+    "cert": null,
+    "key": null,
+    "seeds": [
+      { "address": "byrd.io", "port": 443, "protocol": "https" }
+    ],
+    "address": "127.0.0.1",
+    "port": 8080,
+    "protocol": "http",
+    "logLevel": 4,
+    "datadir": "data/byrd/byrd.db"
+  },
   services: {
     http: {
       port: 3000 // you might want this to be some other port, like 80
