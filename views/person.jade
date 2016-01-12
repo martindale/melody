@@ -5,8 +5,10 @@ block content
   .ui.grid
     .row
       .four.wide.column
+        img.ui.image.fluid.bordered(src="#{person.avatar.url}")
   
         h2 #{person.username}
+        p #{person.bio}
 
         .ui.statistic
           .value #{posts.length}
