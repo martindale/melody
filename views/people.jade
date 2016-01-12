@@ -1,9 +1,13 @@
 extends layouts/default
 
 block content
-  for person in people
-    include partials/person
-    
+
+  h1.header #{people.length} People
+
+  .ui.five.cards
+    for person in people
+      include partials/person
+      
   .ui.segment
     form.ui.form(action="/people", method="post")
       .field
