@@ -1,0 +1,11 @@
+<div>
+    <div ng-repeat="(key,value) in item">
+        <label>{{key}}</label>
+        <br />
+        <input ng-model="item[key]" />
+    </div>
+</div>
+
+<br />
+<a class="btn btn-info" href="./">Cancel</a>
+<button class="btn btn-warning" ng-click="create()">Create</button>
