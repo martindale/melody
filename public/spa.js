@@ -2,7 +2,7 @@
   'use strict';
 
   var models = __models; //{Campaign:null, Contact:null, Lead:null, Meeting:null, Message:null};
-  var app = angular.module("BanzaiApp", ['ngRoute', 'ngAnimate']);
+  var app = angular.module("MakiApp", ['ngRoute', 'ngAnimate']);
 
   function getFunctionBody(func) {
     var fn = "" + func;
@@ -33,9 +33,11 @@
       $scope.models = models;
       $scope.title = "Melody!!!1";
       $scope.footer = "Very Info";
+      $scope.flashes = [];
 
       $scope.$on('FlashMessage', function(event, args) {
         //Flash.create(args.FlashType, args.FlashMsg, 'customAlert');
+        $scope.flashes.push({type:args.FlashType, text:args.FlashMsg});
         console.log("Flash triggered");
       });
 

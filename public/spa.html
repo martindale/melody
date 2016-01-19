@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="BanzaiApp">
+<html ng-app="MakiApp">
 
 <head>
     <meta charset="UTF-8">
@@ -12,9 +12,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
 </head>
 
-<body class="hold-transition skin-blue" ng-controller="MainController" ng-init="action('theUser','User','get','0');">
-<div flash-message="5000" class="alertIn alertOut"></div>
-<div class="wrapper">
+<body ng-controller="MainController" ng-init="action('theUser','User','get','0');">
+
+<div ng-repeat="flash in flashes" class="ui message" ng-class="flash.type">
+    <i class="close icon" ng-click="flashes.splice($index,1)"></i>
+    <div class="header">
+        Notification
+    </div>
+    {{flash.text}}
+</div>
 
 <header class="main-header">
     <nav class="navbar navbar-static-top" role="navigation">
@@ -27,7 +33,7 @@
                 {{key}}
             </a>
             <div class="right menu">
-                <a class="ui item" href="/logout">
+                <a class="ui item" href="/signout">
                     Logout
                 </a>
             </div>
@@ -35,32 +41,18 @@
     </nav>
 </header>
 
-<!-- Right side column. Contains the navbar and content of the page -->
-<div class="content-wrapper">
-    <!-- Page Header -->
-    <section class="content-header">
-        <h1><i class="fa" ng-class="controllericon" style="margin-right:7px;"></i><strong><span ng-bind="controllerheader"></span></strong></h1>
-        <small ng-bind="controllerdescription"></small>
-    </section>
+<section>
+    <div class="ui segment">
+        <div ng-view>
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="ui segment">
-            <div ng-view>
-
-            </div>
         </div>
-    </section>
-    <!-- /.content -->
-
-
-</div>
-<!-- /.right-side -->
+    </div>
+</section>
 
 <footer class="main-footer">
    {{footer}}
 </footer>
-</div>
+
 <!-- Angular -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 <!-- Angular Route -->
