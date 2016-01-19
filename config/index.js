@@ -1,3 +1,5 @@
+var kadfs = require('kad-fs');
+
 module.exports = {
   service: {
     name: 'Your Stream Name', // change this!
@@ -22,13 +24,16 @@ module.exports = {
     "cert": null,
     "key": null,
     "seeds": [
-      { "address": "byrd.io", "port": 443, "protocol": "https" }
+      //{ "address": "byrd.io", "port": 443, "protocol": "https" },
+      { "address": "byrd.ericmartindale.com", "port": 443, "protocol": "https" },
     ],
     "address": "127.0.0.1",
     "port": 8080,
     "protocol": "http",
     "logLevel": 4,
-    "datadir": "data/byrd/byrd.db"
+    "datadir": "data/byrd/byrd.db",
+    transport: require('../node_modules/byrd/lib/server-transport'),
+    storage: kadfs('data/byrd/byrd.db')
   },
   services: {
     http: {
