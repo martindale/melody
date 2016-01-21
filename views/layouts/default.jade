@@ -1,5 +1,5 @@
 doctype html
-html.no-js
+html.no-js(ng-app="MakiApp")
   head
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible", content="IE=edge")
@@ -21,12 +21,10 @@ html.no-js
     script(src="/js/highlight.pack.js")
     script(src="/js/uuid.js")
     script(src="/js/jsonrpc.js")
-    
-    script(src="/js/maki.js")
 
     base(href="/")
 
-  body
+  body(ng-controller="MainController", ng-init="action('theUser','User','get','0');")
     block page
       .ui.page.grid
         .row
@@ -34,7 +32,7 @@ html.no-js
             include ../partials/navbar
 
         .row
-          .column.content(data-for="viewport")
+          .column.content(data-for="viewport", ng-view)
             include ../partials/flash
 
             block content
@@ -80,3 +78,9 @@ html.no-js
       });
 
     block scripts
+
+    script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js")
+    script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-route.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-rc.0/angular-animate.min.js")
+
+    script(src="/js/spa.js")
