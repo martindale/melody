@@ -16,7 +16,7 @@ $.ajax({
 
     console.log('__models:', __models);
   }
-});
+}); 
 
 
 $(document).on('loaded', function() {
