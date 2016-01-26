@@ -44,6 +44,7 @@ $(document).on('loaded', function() {
     }
 
     initApp();
+    angular.bootstrap(document, ["MakiApp"]);
 
     function initApp() {
 
