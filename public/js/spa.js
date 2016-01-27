@@ -6,7 +6,10 @@ $.ajax({
   },
   success: function(data) {
     console.log('OPTIONS of Maki app retrieved:', data);
+
+    window.Resources = data.resources;
     window.__models = {};
+    window.makiConfig = data;
 
     Object.keys(data.resources).forEach(function(name) {
       __models[name] = {
@@ -27,11 +30,17 @@ function plural(modelName) {
 
 $(document).on('loaded', function() {
 
+  window.markdown = marked;
+
   (function(angular) {
     'use strict';
 
     var models = __models;
     var app = angular.module('MakiApp', ['ngRoute', 'ngAnimate']);
+
+    initApp();
+
+    angular.bootstrap(document, ["MakiApp"]);
 
     function getFunctionBody(func) {
       var fn = "" + func;
@@ -48,9 +57,6 @@ $(document).on('loaded', function() {
         result = [];
       return result;
     }
-
-    initApp();
-    angular.bootstrap(document, ["MakiApp"]);
 
     function initApp() {
 
@@ -344,6 +350,11 @@ $(document).on('loaded', function() {
       }
 
       function initDefaultRoutes(models) {
+
+        window.GeneralView = function(el, attrs) {
+          console.log('GeneralView', el, attrs);
+        };
+
         app.config(function($routeProvider, $locationProvider) {
 
           Object.keys(models).forEach(function(modelName) {
@@ -351,8 +362,36 @@ $(document).on('loaded', function() {
             var modelsName = plural(modelName);
             var viewPathPrefix = "";
 
+            var modelView = function() {
+              console.log('thing:', makiConfig.config);
+              console.log('resource:', Resources[modelName]);
+
+              var resource = Resources[modelName];
+              // TODO: use .get when single, .query when multiple
+              var template = resource.templates.query;
+
+              // TODO: auto-populate this
+              var locals = {
+                page: {},
+                messages: {
+                  info: [],
+                  warning: [],
+                  success: [],
+                  error: []
+                },
+                user: {},
+                config: makiConfig.config
+              };
+
+              // TODO: use real data!
+              //locals[ resource.names.query ] = $scope.items;
+              locals[ resource.names.query ] = [];
+
+              return jade.render(template, locals);
+            };
+
             $routeProvider.when('/' + modelsName + '/', {
-              templateUrl: '/views/' + viewPathPrefix + 'index.html',
+              template: modelView,
               controller: modelName + 'Controller'
             });
 
