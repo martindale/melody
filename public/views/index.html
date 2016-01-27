@@ -1,4 +1,7 @@
-<div ng-init="list()" ng-repeat="item in items">
-    <a href="{{item._id}}">{{item._id}} {{item.name}}</a>
+<div ng-init="list()">
+    <div ng-repeat="item in items">
+        <a href="/{{modelsName}}/{{item.slug}}">[{{item._id}}] {{item.name}} {{item.slug}}</a>
+    </div>
 </div>
+
 <a href="/{{modelsName}}/new">[new item]</a>

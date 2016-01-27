@@ -128,7 +128,8 @@ $(document).on('loaded', function() {
           $http({
             method: "post",
             url: "/" + modelsName.toLowerCase()  + "/",
-            data: $scope.item
+            data: $scope.item,
+            headers: { 'Accept': 'application/json' }
           }).then(
             function(response) {
               //console.log('create '+response.data);
@@ -186,6 +187,7 @@ $(document).on('loaded', function() {
         };
 
         $scope.list = function() {
+          console.log("LISTING");
           $http({
             method: "get",
             url: "/" + modelsName.toLowerCase() + "/"
@@ -203,6 +205,7 @@ $(document).on('loaded', function() {
         };
 
         $scope.load = function(populate, after) {
+          console.log("LOADING");
           var id = $route.current.params.id;
           $scope._id = id;
           $scope._item_url = modelsName + '/' + id;
@@ -222,6 +225,7 @@ $(document).on('loaded', function() {
             params: params
           }).then(
             function(response) {
+              console.log("DATA:");
               console.log(response.data);
               $scope.item = response.data;
               $scope.master = angular.copy(response.data);
@@ -305,7 +309,8 @@ $(document).on('loaded', function() {
           $http({
             method: "PATCH",
             url: "/" + modelsName.toLowerCase() + "/",
-            params: item ? item : $scope.item
+            headers: { 'Accept': 'application/json' } ,
+            data: item ? item : $scope.item
           }).then(
             function(response) {
               console.log('saved');
@@ -416,9 +421,9 @@ $(document).on('loaded', function() {
             $routeProvider.when('/' + modelsName + '/:id', {
               templateUrl: function(urlattr) {
                 var url = '/views/' + viewPathPrefix + 'show.html';
-                if (urlattr.id.length != 24) {
-                  url = '/views/' + viewPathPrefix + urlattr.id + '.html';
-                }
+                //if (urlattr.id.length != 24) {
+                //  url = '/views/' + viewPathPrefix + urlattr.id + '.html';
+                //}
                 console.log("SHOW URL" + url);
                 return url;
               },
