@@ -24,12 +24,25 @@ html.no-js
 
     base(href="/")
 
-  body(ng-controller="MainController", ng-init="action('theUser','User','get','0');")
+  body(ng-controller="MainController", ng-init="action('user','User','get','0');")
+
+
+    .ui.message(ng-repeat='flash in flashes', ng-class='flash.type', style="background-color:lightgreen; padding:10px; border:1px solid green;")
+      button(ng-click='flashes.splice($index,1)') x
+      div
+        | Notification
+      |     {{flash.text}}
+
+
+
     block page
       .ui.page.grid
         .row
           block navbar
-            include ../partials/navbar
+            span(ng-repeat="(key, model) in models")
+              strong
+                a(href="/{{model.plural}}") [{{model.plural}}]
+            hr
 
         .row
           .column.content(data-for="viewport", ng-view)

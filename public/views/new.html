@@ -1,4 +1,4 @@
-<div>
+<div ng-init="new()">
     <div ng-repeat="(key,value) in item">
         <label>{{key}}</label>
         <br />
@@ -7,5 +7,5 @@
 </div>
 
 <br />
-<a class="btn btn-info" href="./">Cancel</a>
+<a class="btn btn-info" href="/{{modelsName}}">Cancel</a>
 <button class="btn btn-warning" ng-click="create()">Create</button>

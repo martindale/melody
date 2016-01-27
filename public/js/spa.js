@@ -9,7 +9,10 @@ $.ajax({
     window.__models = {};
 
     Object.keys(data.resources).forEach(function(name) {
-      __models[name] = data.resources[name].attributes;
+      __models[name] = {
+          attributes:data.resources[name].attributes,
+          plural:data.resources[name].plural,
+      };
     });
 
     $(document).trigger('loaded');
@@ -18,6 +21,9 @@ $.ajax({
   }
 });
 
+function plural(modelName){
+    return __models[modelName].plural;
+};
 
 $(document).on('loaded', function() {
 
@@ -82,7 +88,9 @@ $(document).on('loaded', function() {
 
         $scope.action = function(targetProperty, modelName, action, id, data) {
 
-          var url = "/" + modelName + "/" + action + "/";
+          if(!models[modelName]) return;
+
+          var url = "/" + plural(modelName) + "/" + action + "/";
 
           if (id) {
             url += id;
@@ -111,11 +119,16 @@ $(document).on('loaded', function() {
 
       function initDefaultActions(modelName, $scope, $http, $window, $route) {
 
+        $scope.modelName = modelName;
+        var modelsName = plural(modelName);
+        $scope.modelsName = modelsName;
+
+
         $scope.create = function() {
           $http({
-            method: "get",
-            url: "/" + modelName + "/create",
-            params: $scope.item
+            method: "post",
+            url: "/" + modelsName.toLowerCase()  + "/",
+            data: $scope.item
           }).then(
             function(response) {
               //console.log('create '+response.data);
@@ -145,11 +158,11 @@ $(document).on('loaded', function() {
 
         $scope.delete = function(item) {
           $http({
-            method: "get",
-            url: "/" + modelName + "/delete",
-            params: {
-              id: item._id
-            }
+            method: "delete",
+            url: "/" + modelsName.toLowerCase() + "/" + item._id,
+            //params: {
+              //id: item._id
+            //}
           }).then(
             function(response) {
               console.log(response.data);
@@ -175,7 +188,7 @@ $(document).on('loaded', function() {
         $scope.list = function() {
           $http({
             method: "get",
-            url: "/" + modelName + "/list"
+            url: "/" + modelsName.toLowerCase() + "/"
           }).then(
             function(response) {
               console.log(response.data);
@@ -192,7 +205,7 @@ $(document).on('loaded', function() {
         $scope.load = function(populate, after) {
           var id = $route.current.params.id;
           $scope._id = id;
-          $scope._item_url = modelName + 's/' + id;
+          $scope._item_url = modelsName + '/' + id;
 
           var params = populate ? (populate instanceof Array ? {
             populate: populate.join()
@@ -205,7 +218,7 @@ $(document).on('loaded', function() {
 
           $http({
             method: "get",
-            url: "/" + modelName + "/get/" + id,
+            url: "/" + modelsName.toLowerCase() + "/" + id,
             params: params
           }).then(
             function(response) {
@@ -232,9 +245,21 @@ $(document).on('loaded', function() {
           );
         }
 
+        $scope.new = function(){
+            var schema = angular.copy( __models[modelName].attributes );
+            var item = {};
+            Object.keys(schema).forEach(function(key){
+                item[key] = "";
+            });
+            $scope.schema = schema;
+            $scope.item = item;
+            console.log($scope.item);
+        }
+
         $scope.action = function(targetProperty, modelName, action, id, data) {
 
-          var url = "/" + modelName + "/" + action + "/";
+          var modelsName = plural(modelName);
+          var url = "/" + modelsName.toLowerCase() + "/" + action + "/";
 
           if (id) {
             url += id;
@@ -278,8 +303,8 @@ $(document).on('loaded', function() {
           console.log($scope.item);
 
           $http({
-            method: "get",
-            url: "/" + modelName + "/update",
+            method: "PATCH",
+            url: "/" + modelsName.toLowerCase() + "/",
             params: item ? item : $scope.item
           }).then(
             function(response) {
@@ -375,21 +400,24 @@ $(document).on('loaded', function() {
 
           Object.keys(models).forEach(function(modelName) {
 
-            $routeProvider.when('/' + modelName + 's/', {
-              templateUrl: '/views/' + modelName + 's/index.html',
+            var modelsName = plural(modelName);
+            var viewPathPrefix = "";
+
+            $routeProvider.when('/' + modelsName + '/', {
+              templateUrl: '/views/' + viewPathPrefix + 'index.html',
               controller: modelName + 'Controller'
             });
 
             $routeProvider.when('/' + modelName + '/', {
-              templateUrl: '/views/' + modelName + 's/index.html',
+              templateUrl: '/views/' + viewPathPrefix + 'index.html',
               controller: modelName + 'Controller'
             });
 
-            $routeProvider.when('/' + modelName + 's/:id', {
+            $routeProvider.when('/' + modelsName + '/:id', {
               templateUrl: function(urlattr) {
-                var url = '/views/' + modelName + 's/show.html';
+                var url = '/views/' + viewPathPrefix + 'show.html';
                 if (urlattr.id.length != 24) {
-                  url = '/views/' + modelName + 's/' + urlattr.id + '.html';
+                  url = '/views/' + viewPathPrefix + urlattr.id + '.html';
                 }
                 console.log("SHOW URL" + url);
                 return url;
@@ -397,18 +425,18 @@ $(document).on('loaded', function() {
               controller: modelName + 'Controller'
             });
 
-            $routeProvider.when('/' + modelName + 's/:id/:action', {
+            $routeProvider.when('/' + modelsName + '/:id/:action', {
               templateUrl: function(urlattr) {
-                var url = '/views/' + modelName + "s/" + urlattr.action + '.html';
+                var url = '/views/' + viewPathPrefix + urlattr.action + '.html';
                 console.log(url);
                 return url;
               },
               controller: modelName + 'Controller'
             });
 
-            $routeProvider.when('/' + modelName + 's/:action', {
+            $routeProvider.when('/' + modelsName + '/:action', {
               templateUrl: function(urlattr) {
-                var url = '/views/' + modelName + "s/" + urlattr.action + '.html';
+                var url = '/views/' + viewPathPrefix + urlattr.action + '.html';
                 console.log(url);
                 return url;
               },
