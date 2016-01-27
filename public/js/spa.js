@@ -21,17 +21,17 @@ $.ajax({
   }
 });
 
-function plural(modelName){
+function plural(modelName) {
     return __models[modelName].plural;
-};
+}
 
 $(document).on('loaded', function() {
 
   (function(angular) {
     'use strict';
 
-    var models = __models; //{Campaign:null, Contact:null, Lead:null, Meeting:null, Message:null};
-    var app = angular.module("MakiApp", ['ngRoute', 'ngAnimate']);
+    var models = __models;
+    var app = angular.module('MakiApp', ['ngRoute', 'ngAnimate']);
 
     function getFunctionBody(func) {
       var fn = "" + func;
@@ -56,63 +56,7 @@ $(document).on('loaded', function() {
 
       console.log('init');
 
-      app.controller('MainController', function($scope, $route, $routeParams, $location, $http) {
-        $scope.$route = $route;
-        $scope.$location = $location;
-        $scope.$routeParams = $routeParams;
-        $scope.models = models;
-        $scope.title = "Melody!!!1";
-        $scope.footer = "Very Info";
-        $scope.flashes = [];
-
-        $scope.$on('FlashMessage', function(event, args) {
-          //Flash.create(args.FlashType, args.FlashMsg, 'customAlert');
-          $scope.flashes.push({type:args.FlashType, text:args.FlashMsg});
-          console.log("Flash triggered");
-        });
-
-        $scope.signout = function() {
-          console.log("signout triggered")
-          var request = $http({
-            method: "GET",
-            url: "/signout"
-          });
-          return (request.then(
-            function(res) {
-              window.location = "/";
-            },
-            function(err) {
-              console.log(err);
-            }));
-        };
-
-        $scope.action = function(targetProperty, modelName, action, id, data) {
-
-          if(!models[modelName]) return;
-
-          var url = "/" + plural(modelName) + "/" + action + "/";
-
-          if (id) {
-            url += id;
-          }
-          console.log('action');
-          console.log(url);
-
-          $http({
-            method: "get",
-            url: url,
-            params: data
-          }).then(
-            function(response) {
-              //console.log(response.data);
-              $scope[targetProperty] = response.data;
-            },
-            function(err) {
-              console.log(err);
-            }
-          );
-        }
-      });
+      app.controller('MainController', MainController);
 
       initDefaultControllers(models);
       initDefaultRoutes(models);
@@ -122,7 +66,6 @@ $(document).on('loaded', function() {
         $scope.modelName = modelName;
         var modelsName = plural(modelName);
         $scope.modelsName = modelsName;
-
 
         $scope.create = function() {
           $http({
@@ -220,8 +163,8 @@ $(document).on('loaded', function() {
           console.log(params);
 
           $http({
-            method: "get",
-            url: "/" + modelsName.toLowerCase() + "/" + id,
+            method: 'get',
+            url: '/' + modelsName.toLowerCase() + '/' + id,
             params: params
           }).then(
             function(response) {
@@ -247,7 +190,7 @@ $(document).on('loaded', function() {
               console.log(err);
             }
           );
-        }
+        };
 
         $scope.new = function(){
             var schema = angular.copy( __models[modelName].attributes );
@@ -258,7 +201,7 @@ $(document).on('loaded', function() {
             $scope.schema = schema;
             $scope.item = item;
             console.log($scope.item);
-        }
+        };
 
         $scope.action = function(targetProperty, modelName, action, id, data) {
 
@@ -284,7 +227,7 @@ $(document).on('loaded', function() {
               console.log(err);
             }
           );
-        }
+        };
 
         $scope.master = {};
 
@@ -307,8 +250,8 @@ $(document).on('loaded', function() {
           console.log($scope.item);
 
           $http({
-            method: "PATCH",
-            url: "/" + modelsName.toLowerCase() + "/",
+            method: 'PATCH',
+            url: '/' + modelsName.toLowerCase() + '/',
             headers: { 'Accept': 'application/json' } ,
             data: item ? item : $scope.item
           }).then(
@@ -334,7 +277,7 @@ $(document).on('loaded', function() {
               });
             }
           );
-        }
+        };
       }
 
       function execDefaultActions($scope) {
@@ -463,3 +406,47 @@ $(document).on('loaded', function() {
   })(window.angular);
 
 });
+
+function MainController($scope, $route, $routeParams, $location, $http) {
+  $scope.$route = $route;
+  $scope.$location = $location;
+  $scope.$routeParams = $routeParams;
+  $scope.models = window.__models;
+  $scope.title = "Melody!!!1";
+  $scope.footer = "Very Info";
+  $scope.flashes = [];
+
+  $scope.$on('FlashMessage', function(event, args) {
+    //Flash.create(args.FlashType, args.FlashMsg, 'customAlert');
+    $scope.flashes.push({type:args.FlashType, text:args.FlashMsg});
+    console.log("Flash triggered");
+  });
+
+  $scope.action = MainControllerAction;
+}
+
+function MainControllerAction(targetProperty, modelName, action, id, data) {
+  if(!window.__models[modelName]) return;
+
+  var url = '/' + plural(modelName) + '/' + action + '/';
+
+  if (id) {
+    url += id;
+  }
+  console.log('action');
+  console.log(url);
+
+  $http({
+    method: 'get',
+    url: url,
+    params: data
+  }).then(
+    function(response) {
+      //console.log(response.data);
+      $scope[targetProperty] = response.data;
+    },
+    function(err) {
+      console.log(err);
+    }
+  );
+}

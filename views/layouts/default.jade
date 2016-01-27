@@ -27,7 +27,7 @@ html.no-js
   body(ng-controller="MainController", ng-init="action('user','User','get','0');")
 
 
-    .ui.message(ng-repeat='flash in flashes', ng-class='flash.type', style="background-color:lightgreen; padding:10px; border:1px solid green;")
+    .ui.message(ng-repeat="flash in flashes", ng-class="flash.type")
       button(ng-click='flashes.splice($index,1)') x
       div
         | Notification
