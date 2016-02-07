@@ -1,0 +1,36 @@
+dom-module#melody-posts
+  style.
+    .melody-posts {
+      width: 100%;
+    }
+
+  template
+    .ui.cards
+      template(is="dom-repeat", items="{{items}}")
+        melody-post(src="{{item.href}}", item="{{item}}")
+
+  script.
+    Polymer({
+      is: 'melody-posts',
+      properties: {
+        src: {
+          type: String
+        },
+        items: {
+          type: Array
+        },
+        as: {
+          type: String,
+          value: 'item'
+        }
+      },
+      ready: function() {
+        var self = this;
+        $.getJSON(self.src, function(data) {
+          self.items = data;
+        });
+      },
+      _resourceProperties: function() {
+        
+      }
+    });

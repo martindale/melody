@@ -1,0 +1,29 @@
+dom-module#melody-post
+  style.
+    .melody-post {
+      width: 100%;
+    }
+  
+  template
+    .ui.fluid.card
+      //-.image
+        img(src="/img/maki-logo.png")
+      .content
+        a.header(href="{{item.href}}") name: {{item.name}}
+        p.description description: {{item.description}}
+      template(if="{{item.action}}")
+        a.ui.bottom.attached.button(if="{{item.action}}", href="{{item.action.href}}") {{item.action.text}}
+
+  script.
+    Polymer({
+      is: 'melody-post',
+      properties: {
+        src: {
+          type: String,
+          //observer: '_srcChanged'
+        }
+      },
+      _srcChanged: function() {
+        console.log('source changed for item');
+      }
+    });
