@@ -1,0 +1,19 @@
+dom-module#melody-post-controls
+  template
+    if (user && user.capabilities && ~user.capabilities.indexOf('write'))
+      a.ui.mini.button(href="#", data-intent="edit", data-target="post-description", data-id="#{post.slug}")
+        i.icon.edit
+        | edit
+    a(href="/posts/{{post.slug}}") permalink
+
+  script(src="/js/jquery.js")
+  script(src="/js/lodash.min.js")
+  script.
+    Polymer({
+      is: 'melody-post-controls',
+      properties: {
+        post: {
+          type: Object
+        }
+      }
+    });

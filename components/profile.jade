@@ -1,25 +1,22 @@
-dom-module#melody-post
+dom-module#melody-profile
   style.
-    .melody-post {
+    .melody-profile {
       width: 100%;
     }
 
   template
-    .ui.fluid.card
-      template(if="{{item.image}}")
-        .image
-          img(src="/img/maki-logo.png")
-      .content
-        .meta
-          a(href="/{{type.names.query}}/{{item._id}}") @{{item._author.username}}martindale
-          |  &middot; &nbsp; 
-          a(href="/{{type.names.query}}/{{item._id}}") 0s
-        .description {{item.content}}
-      //-.extra.content
-        melody-post-controls(post="{{item}}")
+    .ui.grid
+      .row
+        .four.wide.column
+          h2 {{item.username}}
+          .ui.statistic
+            .value 0
+            .label posts
+        .twelve.wide.column
+          melody-posts(src="/posts", filter="{ person: 'martindale' }", limit=20)
   script.
     Polymer({
-      is: 'melody-post',
+      is: 'melody-profile',
       listeners: {
         'datastore:query':  '_handleQuery',
         'state:change':     '_applyState'
@@ -40,10 +37,10 @@ dom-module#melody-post
       _handleQuery: function(e, key) {
         var self = this;
         var datastore = document.querySelectorAll('maki-datastore')[0];
-        console.log('[MELODY:POST]','_handleQuery:', e, key);
-        if (!datastore) return console.error('[MELODY:POST]', 'no datastore');
+        console.log('[MELODY:PROFILE]','_handleQuery:', e, key);
+        if (!datastore) return console.error('[MELODY:PROFILE]', 'no datastore');
         datastore._retrieve(key, function(err, data) {
-          console.log('[MELODY:POST]', 'retrieve result:', err, data);
+          console.log('[MELODY:PROFILE]', 'retrieve result:', err, data);
           if (!data) datastore.fire('datastore:miss', hash);
           if (err) {
             console.error('_handleQuery error:', err);
@@ -58,33 +55,33 @@ dom-module#melody-post
       _sourceChanged: function(source) {
         var self = this;
         var melody = document.querySelectorAll('melody-application')[0];
-        console.log('[MELODY:POST]', '_sourceChanged:', source);
+        console.log('[MELODY:PROFILE]', '_sourceChanged:', source);
         
         // TODO: _sourceChanged is firing before the application exists (is
         // attached?), requiring this check.  There are many flow optimizations
         // to be made here.
         if (melody && melody.resourceMap) {
           //self.type = melody.resourceMap[source];
-          self.type = melody.resourceMap['/posts'];
+          self.type = melody.resourceMap['/people'];
         }
         
         self._sync();
       },
       _sync: function() {
         var self = this;
-        console.log('[MELODY:POST]', '_sync');
+        console.log('[MELODY:PROFILE]', '_sync');
         self.fire('datastore:query', self.src);
       },
       ready: function() {
         var self = this;
-        console.log('[MELODY:POST]', 'ready');
+        console.log('[MELODY:PROFILE]', 'ready');
         if (self.item) {
-          self.src = '/posts/' + self.item.slug;
+          self.src = '/people/' + self.item.slug;
         }
       },
       attached: function() {
         var self = this;
-        console.log('[MELODY:POST]', 'collection is attached:', self.src);
+        console.log('[MELODY:PROFILE]', 'collection is attached:', self.src);
         var channel = document.querySelectorAll('maki-channel')[0];
         channel._subscribe(self.src);
       }

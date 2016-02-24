@@ -1,0 +1,56 @@
+dom-module#melody-writer
+  template
+    form.ui.form.large(action="/posts", method="post")
+      .field
+        label Content
+        textarea(name="content")
+      .field.right.floated
+        button.ui.right.floated.primary.submit.button(type="submit") Post
+          i.icon.right.chevron
+  script(src="/js/jquery.min.js")
+  script.
+    Polymer({
+      is: 'melody-writer',
+      listeners: {
+        'submit': '_submit'
+      },
+      attributes: {
+        state: {
+          type: String,
+          observer: '_evaluateState',
+          notify: true
+        }
+      },
+      _submit: function(e) {
+        e.preventDefault();
+        
+        var self = this;
+        var form = self.querySelectorAll('form')[0];
+        
+        self.state = 'loading';
+        // TODO: why must this be called manually?
+        self._evaluateState();
+        $.ajax({
+          url: form.action,
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json'
+          },
+          data: $(form).serialize(),
+          // TODO: use the results directly!
+          success: function() {
+            self.replaceChild(document.createElement('melody-writer'), form);
+          }
+        });
+        return false;
+      },
+      _evaluateState: function(e) {
+        var self = this;
+        var form = self.querySelectorAll('form')[0];
+        console.log('[MELODY:WRITER]', '_evaluateState');
+        self.toggleClass('loading', (self.state === 'loading'), form);
+      },
+      ready: function() {
+        console.log('[MELODY:WRITER]', 'ready! this:', this);
+      }
+    });

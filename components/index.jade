@@ -3,11 +3,20 @@ dom-module#melody-index
     .melody-index {
       width: 100%;
     }
-
   template
-    melody-posts(src="/posts")
-
+    melody-writer
+    .ui.container
+      melody-posts(src="/posts")
   script.
     Polymer({
-      is: 'melody-index'
+      is: 'melody-index',
+      created: function() {
+        console.log('[MELODY:INDEX]', 'created');
+      },
+      ready: function() {
+        console.log('[MELODY:INDEX]', 'ready');
+      },
+      attached: function() {
+        console.log('[MELODY:INDEX]', 'attached');
+      }
     });

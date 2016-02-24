@@ -3,7 +3,8 @@ module.exports = {
     name: 'Your Stream Name', // change this!
     synopsis: 'Thoughts and musings from me.', // and this...
     mission: 'Self-hosted writing and content sharing, powered by Maki', // also
-    icon: 'write' // pick from: http://semantic-ui.com/elements/icon.html
+    icon: 'write', // pick from: http://semantic-ui.com/elements/icon.html
+    namespace: 'melody' // only change if you know what you're doing.
   },
   config: {
     allowPublicRegistration: false, // let other people register

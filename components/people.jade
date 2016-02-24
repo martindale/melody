@@ -1,22 +1,25 @@
-dom-module#melody-posts
+dom-module#melody-people
   template
     .ui.cards
       template(is="dom-repeat", items="{{items}}")
-        .ui.fluid.card
-          template(if="{{item.image}}")
-            .image
-              img(src="/img/maki-logo.png")
+        a.ui.card(href="/people/{{item.slug}}")
           .content
-            .meta
-              a(href="/{{type.names.query}}/{{item._id}}") @{{item._author.username}}martindale
-              |  &middot; &nbsp; 
-              a(href="/{{type.names.query}}/{{item._id}}") 0s
-            .description {{item.content}}
-          //-.extra.content
-            melody-post-controls(post="{{item}}")
+            .header {{item.username}}
+            .meta joined 
+              abbr.tooltipped(title="{{item.created}}") {{item.created}}
+    .ui.segment
+      form.ui.form(action="/people", method="post")
+        .field
+          label Username
+          input(type="text", name="username")
+        .field
+          label Password
+          input(type="password", name="password")
+        button.ui.right.floated.primary.submit.button Register
+          i.icon.right.chevron
   script.
     Polymer({
-      is: 'melody-posts',
+      is: 'melody-people',
       listeners: {
         'datastore:query':  '_handleQuery',
         'state:change':     '_applyState'
@@ -24,8 +27,7 @@ dom-module#melody-posts
       properties: {
         src: {
           type: String,
-          observer: '_sourceChanged',
-          reflectToAttribute: true
+          observer: '_sourceChanged'
         },
         type: {
           type: Object
@@ -34,25 +36,14 @@ dom-module#melody-posts
           type: Array,
           notify: true
         },
-        trusted: {
-          type: Boolean
-        }
       },
       _handleQuery: function(e, key) {
         var self = this;
-
-        // disallow retrieval from remotes unless _explicitly_ allowed
-        if (!self.trusted && !key.match('^/')) {
-          var el = document.createElement('a');
-          el.href = key;
-          key = el.pathname;
-        }
-
         var datastore = document.querySelectorAll('maki-datastore')[0];
-        console.log('[MELODY:POSTS]','_handleQuery:', e, key);
-        if (!datastore) return console.error('[MELODY:POSTS]', 'no datastore');
+        console.log('[MELODY:PEOPLE]','_handleQuery:', e, key);
+        if (!datastore) return console.error('[MELODY:PEOPLE]', 'no datastore');
         datastore._retrieve(key, function(err, data) {
-          console.log('[MELODY:POSTS]', 'retrieve result:', err, data);
+          console.log('[MELODY:PEOPLE]', 'retrieve result:', err, data);
           if (!data) datastore.fire('datastore:miss', hash);
           if (err) {
             console.error('_handleQuery error:', err);
@@ -71,19 +62,10 @@ dom-module#melody-posts
 
         self.items = state;
       },
-      _sourceChanged: function(source, old) {
+      _sourceChanged: function(source) {
         var self = this;
         var melody = document.querySelectorAll('melody-application')[0];
-        
-        // TODO: what sets this value to http:// instead of a relative path?
-        console.log('[MELODY:POSTS]', '_sourceChanged:', source, old);
-        // TODO: merge with code in _handleQuery for `trusted` attribute
-        if (source.match(/^http/i)) {
-          var el = document.createElement('a');
-          el.href = source;
-          self.src = el.pathname;
-          return;
-        };
+        console.log('[MELODY:PEOPLE]', '_sourceChanged:', source);
         
         // TODO: _sourceChanged is firing before the application exists (is
         // attached?), requiring this check.  There are many flow optimizations
@@ -96,21 +78,17 @@ dom-module#melody-posts
       },
       _sync: function() {
         var self = this;
-        console.log('[MELODY:POSTS]', '_sync');
+        console.log('[MELODY:PEOPLE]', '_sync');
         self.fire('datastore:query', self.src);
-      },
-      created: function() {
-        var self = this;
-        console.log('[MELODY:POSTS]', 'created');
       },
       ready: function() {
         var self = this;
-        console.log('[MELODY:POSTS]', 'ready');
-        self.src = '/posts';
+        console.log('[MELODY:PEOPLE]', 'ready');
+        self.src = '/people';
       },
       attached: function() {
         var self = this;
-        console.log('[MELODY:POSTS]', 'collection is attached:', self.src);
+        console.log('[MELODY:PEOPLE]', 'collection is attached:', self.src);
         var channel = document.querySelectorAll('maki-channel')[0];
         channel._subscribe(self.src);
       }
