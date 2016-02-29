@@ -11,9 +11,9 @@ dom-module#melody-post
           img(src="/img/maki-logo.png")
       .content
         .meta
-          a(href="/{{type.names.query}}/{{item._id}}") @{{item._author.username}}martindale
+          a(href="/people/{{item._author.slug}}") @{{item._author.name}}
           |  &middot; &nbsp; 
-          a(href="/{{type.names.query}}/{{item._id}}") 0s
+          a(href="/{{type.names.query}}/{{item._id}}") {{item.created}}
         .description {{item.content}}
       //-.extra.content
         melody-post-controls(post="{{item}}")

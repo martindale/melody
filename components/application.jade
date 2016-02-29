@@ -6,13 +6,17 @@ dom-module#melody-application
 
   template
     maki-datastore(name="melody")
-    maki-identity
     maki-channel(autoconnect, reconnect)
 
     .ui.page.grid
       .row
         #navigation
-          melody-navbar
+          .ui.large.labeled.icon.menu
+            a.item(href="/")
+              i.icon.left(class="#{ config.service.icon || 'lab' }")
+              | #{config.service.name}
+
+            maki-identity.right.menu
 
       .row
         .content
@@ -20,7 +24,6 @@ dom-module#melody-application
           .ui.menu
             a.item(href="/posts") posts
             a.item(href="/people") people
-            a.item(href="/keys") keys
             a.item(href="/peers") peers
             a.item(href="/identities") identities
 
@@ -63,7 +66,11 @@ dom-module#melody-application
         datastore: {
           type: Object
         },
-        worker: { type: Object }
+        worker: { type: Object },
+        identity: {
+          type: Object,
+          notify: true
+        }
       },
       _route: function(ctx) {
         var self = this;
@@ -90,7 +97,7 @@ dom-module#melody-application
           }
         }
         
-        //console.log('[MELODY:APPLICATION]', 'settled on rendering:', view.type.route, view);
+        console.log('[MELODY:APPLICATION]', 'settled on rendering:', view.type.route, view);
         //console.log('[MELODY:APPLICATION]', 'type.static:', view.type.static);
         //console.log('[MELODY:APPLICATION]', 'setting and appending...');
         
@@ -112,8 +119,8 @@ dom-module#melody-application
         console.log('[MELODY:APPLICATION]', '_resourcesUpdated', resources);
 
         var order = ['Person', 'Post', 'Index'];
-        //Object.keys(resources).forEach(function(name) {
-        order.forEach(function(name) {
+        /**/Object.keys(resources).forEach(function(name) {
+        /*/order.forEach(function(name) { */
           var resource = resources[name];
           console.log('[MELODY:APPLICATION]', 'initializing', name);
           ['get', 'query'].forEach(function(action) {
