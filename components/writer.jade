@@ -1,13 +1,14 @@
 dom-module#melody-writer
   template
-    form.ui.form.large(action="/posts", method="post")
-      input(type="hidden", name="_identity", value$="{{identity.key.public}}")
-      .field
-        label Content
-        textarea(name="content")
-      .field.right.floated
-        button.ui.right.floated.primary.submit.button(type="submit") Post
-          i.icon.right.chevron
+    template(is="dom-if", if="{{hasIdentity}}")
+      form.ui.form.large(action="/posts", method="post")
+        input(type="hidden", name="_identity", value$="{{identity.key.public}}")
+        .field
+          label Content
+          textarea(name="content")
+        .field.right.floated
+          button.ui.right.floated.primary.submit.button(type="submit") Post
+            i.icon.right.chevron
   script(src="/js/jquery.min.js")
   script.
     Polymer({
@@ -70,6 +71,9 @@ dom-module#melody-writer
         if (manager.identity) {
           self.identity = manager.identity;
           self.hasIdentity = true;
+        } else {
+          self.identity = null;
+          self.hasIdentity = false;
         }
       },
       ready: function() {
