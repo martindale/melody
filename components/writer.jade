@@ -82,8 +82,14 @@ dom-module#melody-writer
       attached: function() {
         var self = this;
         var manager = document.querySelector('maki-identity');
-        document.addEventListener('datastore:identity:open', self._loadIdentity.bind(self), false);
-        manager.addEventListener('identity', self._loadIdentity.bind(self));
+        var loader = self._loadIdentity.bind(self);
+
+        document.removeEventListener('datastore:identity:open', loader);
+        manager.removeEventListener('datastore:identity:open', loader);
+
+        document.addEventListener('datastore:identity:open', loader, false);
+        manager.addEventListener('identity', loader);
+
         self._loadIdentity();
       }
     });
