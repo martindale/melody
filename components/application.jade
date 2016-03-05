@@ -7,6 +7,7 @@ dom-module#melody-application
   template
     maki-datastore(name="melody")
     maki-channel(autoconnect, reconnect)
+    maki-peer-manager(autoconnect, limit="128", strategy="lowest-latency")
 
     .ui.page.grid
       .row
