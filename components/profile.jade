@@ -8,9 +8,9 @@ dom-module#melody-profile
     .ui.grid
       .row
         .four.wide.column
-          h2 {{item.username}}
+          h2 {{item.name}}
           .ui.statistic
-            .value 0
+            .value {{item.stats.posts}}
             .label posts
         .twelve.wide.column
           melody-posts(src="/posts", filter="{ person: 'martindale' }", limit=20)
@@ -41,7 +41,7 @@ dom-module#melody-profile
         if (!datastore) return console.error('[MELODY:PROFILE]', 'no datastore');
         datastore._retrieve(key, function(err, data) {
           console.log('[MELODY:PROFILE]', 'retrieve result:', err, data);
-          if (!data) datastore.fire('datastore:miss', hash);
+          if (!data) datastore.fire('datastore:miss', key);
           if (err) {
             console.error('_handleQuery error:', err);
             data = [];
