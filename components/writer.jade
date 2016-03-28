@@ -1,14 +1,15 @@
 dom-module#melody-writer
   template
-    form.ui.form.large(action="/posts", method="post")
-      input(type="hidden", name="_identity", value$="{{identity.key.public}}")
-      .field
-        label Content
-        textarea(name="content")
-      .field.right.floated
-        button.ui.right.floated.primary.submit.button(type="submit") Post
-          i.icon.right.chevron
-  script(src="/js/jquery.min.js")
+    template(is="dom-if", if="{{hasIdentity}}")
+      form.ui.form.large(action="/posts", method="post")
+        input(type="hidden", name="_identity", value$="{{identity.key.public}}")
+        .field
+          label Content
+          textarea(name="content")
+        .field.right.floated
+          button.ui.right.floated.primary.submit.button(type="submit") Post
+            i.icon.right.chevron
+  script(src="/js/jquery.min.js", async)
   script.
     Polymer({
       is: 'melody-writer',
@@ -70,6 +71,9 @@ dom-module#melody-writer
         if (manager.identity) {
           self.identity = manager.identity;
           self.hasIdentity = true;
+        } else {
+          self.identity = null;
+          self.hasIdentity = false;
         }
       },
       ready: function() {
@@ -78,8 +82,14 @@ dom-module#melody-writer
       attached: function() {
         var self = this;
         var manager = document.querySelector('maki-identity');
-        document.addEventListener('datastore:identity:open', self._loadIdentity.bind(self), false);
-        manager.addEventListener('identity', self._loadIdentity.bind(self));
+        var loader = self._loadIdentity.bind(self);
+
+        document.removeEventListener('datastore:identity:open', loader);
+        manager.removeEventListener('datastore:identity:open', loader);
+
+        document.addEventListener('datastore:identity:open', loader, false);
+        manager.addEventListener('identity', loader);
+
         self._loadIdentity();
       }
     });

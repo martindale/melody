@@ -4,7 +4,14 @@ dom-module#melody-index
       width: 100%;
     }
   template
-    melody-writer
+    .ui.icon.fluid.message
+      i.icon.rocket
+      .content
+        .header Welcome to #{config.service.name}.
+        p This is a service brought to you by <a>@someauthor</a>.  You can post content here using your existing identity, or create a new one and start fresh.
+
+    .ui.container
+      melody-writer
     .ui.container
       melody-posts(src="/posts")
   script.

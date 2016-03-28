@@ -7,6 +7,7 @@ dom-module#melody-application
   template
     maki-datastore(name="melody")
     maki-channel(autoconnect, reconnect)
+    maki-peer-manager(autoconnect, limit="128", strategy="lowest-latency")
 
     .ui.page.grid
       .row
@@ -15,29 +16,18 @@ dom-module#melody-application
             a.item(href="/")
               i.icon.left(class="#{ config.service.icon || 'lab' }")
               | #{config.service.name}
-
-            maki-identity.right.menu
-
-      .row
-        .content
-          h3 debug (resources)
-          .ui.menu
-            a.item(href="/posts") posts
-            a.item(href="/people") people
-            a.item(href="/peers") peers
-            a.item(href="/identities") identities
-
+            maki-identity.right.menu(autoselect)
       .row
         .column.content(for="viewport")
           melody-index
-
       .row
         .ui.one.column.stackable.center.aligned
           p
             small powered by <a href="http://github.com/martindale/melody">melody</a>.
-  script(src="/js/page.min.js")
+
+  script(src="/js/page.min.js", async)
   //- TODO: remove jquery dependency
-  script(src="/js/jquery.js")
+  script(src="/js/jquery.js", async)
   script.
     window.maki = Polymer({
       is: 'melody-application',
@@ -75,20 +65,11 @@ dom-module#melody-application
       _route: function(ctx) {
         var self = this;
         var viewport = document.querySelectorAll('[for=viewport]')[0];
-
-        console.log('[MELODY:APPLICATION]', '_route', ctx.path, component);
-        console.log('[MELODY:APPLICATION]', 'routes:', self.routes);
-        console.log('[MELODY:APPLICATION]', 'components:', self.components);
-
         var component = 'maki-undefined';
         var view = null;
         for (var route in self.routes) {
           var regex = self.routes[route];
-          
-          console.log('[MELODY:APPLICATION]', 'testing', regex, 'against', ctx.path);
-          
           if (regex.test(ctx.path)) {
-            console.log('[MELODY:APPLICATION]', 'picking', route, 'from', ctx.path);
             component = self.components[route];
             view = document.createElement(component);
             view.type = self.resourceMap[route];
@@ -97,7 +78,7 @@ dom-module#melody-application
           }
         }
         
-        console.log('[MELODY:APPLICATION]', 'settled on rendering:', view.type.route, view);
+        //console.log('[MELODY:APPLICATION]', 'settled on rendering:', view.type.route, view);
         //console.log('[MELODY:APPLICATION]', 'type.static:', view.type.static);
         //console.log('[MELODY:APPLICATION]', 'setting and appending...');
         
