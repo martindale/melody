@@ -1,5 +1,8 @@
 a.ui.card(href="/people/#{person.slug}")
+  .image
+    img(src="#{person.avatar.url}")
   .content
     .header #{person.username}
     .meta joined 
       abbr.tooltipped(title="#{person.created}") #{moment(person.created).fromNow()}
+    .description #{person.bio}
