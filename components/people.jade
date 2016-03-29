@@ -29,7 +29,7 @@ dom-module#melody-people
       },
       _handleQuery: function(e, key) {
         var self = this;
-        var datastore = document.querySelectorAll('maki-datastore')[0];
+        var datastore = document.querySelector('maki-datastore[name=melody]');
         console.log('[MELODY:PEOPLE]','_handleQuery:', e, key);
         if (!datastore) return console.error('[MELODY:PEOPLE]', 'no datastore');
         datastore._retrieve(key, function(err, data) {
@@ -54,7 +54,7 @@ dom-module#melody-people
       },
       _sourceChanged: function(source) {
         var self = this;
-        var melody = document.querySelectorAll('melody-application')[0];
+        var melody = document.querySelector('melody-application');
         console.log('[MELODY:PEOPLE]', '_sourceChanged:', source);
         
         // TODO: _sourceChanged is firing before the application exists (is
@@ -79,7 +79,7 @@ dom-module#melody-people
       attached: function() {
         var self = this;
         console.log('[MELODY:PEOPLE]', 'collection is attached:', self.src);
-        var channel = document.querySelectorAll('maki-channel')[0];
+        var channel = document.querySelector('maki-channel');
         channel._subscribe(self.src);
       }
     });

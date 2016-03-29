@@ -5,8 +5,9 @@ dom-module#melody-application
     }
 
   template
+    maki-content-store
     maki-datastore(name="melody")
-    maki-channel(autoconnect, reconnect)
+    maki-channel(autoconnect, reconnect, namespace="melody")
     //-maki-peer-manager(autoconnect, limit="128", strategy="lowest-latency")
 
     .ui.page.grid
@@ -20,10 +21,6 @@ dom-module#melody-application
       .row
         .column.content(for="viewport")
           melody-index
-      .row
-        .ui.one.column.stackable.center.aligned
-          p
-            small powered by <a href="http://github.com/martindale/melody">melody</a>.
 
   script(src="/js/page.min.js", async)
   //- TODO: remove jquery dependency
@@ -64,7 +61,7 @@ dom-module#melody-application
       },
       _route: function(ctx) {
         var self = this;
-        var viewport = document.querySelectorAll('[for=viewport]')[0];
+        var viewport = document.querySelector('[for=viewport]');
         var component = 'maki-undefined';
         var view = null;
         for (var route in self.routes) {
@@ -94,14 +91,9 @@ dom-module#melody-application
       _resourcesUpdated: function(resources) {
         var self = this;
         var _route = self._route.bind(self);
-
         self.resourceMap = {};
-        
         console.log('[MELODY:APPLICATION]', '_resourcesUpdated', resources);
-
-        var order = ['Person', 'Post', 'Index'];
-        /**/Object.keys(resources).forEach(function(name) {
-        /*/order.forEach(function(name) { */
+        Object.keys(resources).forEach(function(name) {
           var resource = resources[name];
           console.log('[MELODY:APPLICATION]', 'initializing', name);
           ['get', 'query'].forEach(function(action) {
