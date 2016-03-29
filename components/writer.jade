@@ -3,12 +3,17 @@ dom-module#melody-writer
     template(is="dom-if", if="{{hasIdentity}}")
       form.ui.form.large(action="/posts", method="post")
         input(type="hidden", name="_identity", value$="{{identity.key.public}}")
+        .ui.error.message
+          //-i.icon.close(on-tap="_closeMessage")
+          .header Something went wrong.
+          p {{message}}
         .field
           label Content
-          textarea(name="content")
+          textarea(name="content", rows="2")
         .field.right.floated
           button.ui.right.floated.primary.submit.button(type="submit") Post
             i.icon.right.chevron
+
   script(src="/js/jquery.min.js", async)
   script.
     Polymer({
@@ -17,13 +22,16 @@ dom-module#melody-writer
         // TODO: understand why this submit event is seemingly firing on the
         // custom element, when one would expect it to fire on the <form>
         // are events "bubbling" up through the DOM?
-        'submit': '_submit'
+        //'submit': '_submit'
       },
       properties: {
         state: {
           type: String,
           observer: '_evaluateState',
           notify: true
+        },
+        message: {
+          type: String
         },
         identity: {
           type: Object
@@ -33,14 +41,18 @@ dom-module#melody-writer
           value: false
         }
       },
+      _clean: function() {
+      
+      },
+      _closeMessage: function() {
+        $('.ui.error.message').transition('fade');
+      },
       _submit: function(e) {
         e.preventDefault();
         
         var self = this;
-        var form = self.querySelectorAll('form')[0];
-        
-        self.unlisten(form, 'submit', '_submit');
-        
+        var form = self.querySelector('form');
+
         self.state = 'loading';
         // TODO: why must this be called manually?
         self._evaluateState();
@@ -53,20 +65,26 @@ dom-module#melody-writer
           data: $(form).serialize(),
           // TODO: use the results directly!
           success: function() {
+            self.removeEventListener('submit', self._submit);
             self.replaceChild(document.createElement('melody-writer'), form);
+          },
+          error: function(data) {
+            self.message = data.responseText;
+            self.state = 'error';
           }
         });
         return false;
       },
       _evaluateState: function(e) {
         var self = this;
-        var form = self.querySelectorAll('form')[0];
+        var form = self.querySelector('form');
         console.log('[MELODY:WRITER]', '_evaluateState');
         self.toggleClass('loading', (self.state === 'loading'), form);
+        self.toggleClass('error', (self.state === 'error'), form);
       },
       _loadIdentity: function() {
         var self = this;
-        var manager = document.querySelectorAll('maki-identity')[0];
+        var manager = document.querySelector('maki-identity');
         console.log('[MELODY:WRITER]', '_loadIdentity', 'manager', manager.identity);
         if (manager.identity) {
           self.identity = manager.identity;
@@ -78,6 +96,8 @@ dom-module#melody-writer
       },
       ready: function() {
         console.log('[MELODY:WRITER]', 'ready');
+        var self = this;
+        self.addEventListener('submit', self._submit);
       },
       attached: function() {
         var self = this;

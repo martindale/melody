@@ -60,6 +60,7 @@ dom-module#melody-posts
             console.error('_handleQuery error:', err);
             data = [];
           }
+          
           self.fire('state:change', data);
         });
       },
