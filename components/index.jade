@@ -9,10 +9,9 @@ dom-module#melody-index
       .content
         .header Welcome to #{config.service.name}.
         p This is a service brought to you by <a>@someauthor</a>.  You can post content here using your existing identity, or create a new one and start fresh.
-
-    .ui.container
+    .row
       melody-writer
-    .ui.container
+    .row(style="clear: both;")
       melody-posts(src="/posts")
   script.
     Polymer({
