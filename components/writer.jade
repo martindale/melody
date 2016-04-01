@@ -1,4 +1,8 @@
 dom-module#melody-writer
+  style.
+    textarea[name=content] {
+      height: inherit !important;
+    }
   template
     template(is="dom-if", if="{{hasIdentity}}")
       form.ui.form.large(action="/posts", method="post")
@@ -13,8 +17,6 @@ dom-module#melody-writer
         .field.right.floated
           button.ui.right.floated.primary.submit.button(type="submit") Post
             i.icon.right.chevron
-
-  script(src="/js/jquery.min.js", async)
   script.
     Polymer({
       is: 'melody-writer',
