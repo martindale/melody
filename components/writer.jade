@@ -6,7 +6,6 @@ dom-module#melody-writer
   template
     template(is="dom-if", if="{{hasIdentity}}")
       form.ui.form.large(action="/posts", method="post")
-        input(type="hidden", name="_identity", value$="{{identity.key.public}}")
         .ui.error.message
           //-i.icon.close(on-tap="_closeMessage")
           .header Something went wrong.
@@ -58,22 +57,44 @@ dom-module#melody-writer
         self.state = 'loading';
         // TODO: why must this be called manually?
         self._evaluateState();
-        $.ajax({
-          url: form.action,
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json'
-          },
-          data: $(form).serialize(),
-          // TODO: use the results directly!
-          success: function() {
-            self.removeEventListener('submit', self._submit);
-            self.replaceChild(document.createElement('melody-writer'), form);
-          },
-          error: function(data) {
-            self.message = data.responseText;
-            self.state = 'error';
-          }
+        
+        var elements = $(form).serializeArray();
+        var post = {};
+        
+        elements.forEach(function(f) {
+          post[f.name] = f.value;
+        });
+
+        var id = ObjectId().toString();
+        
+        // TODO: mongoose-style schemas, including default values
+        post.id = id;
+        post._id = id;
+        post.created = new Date();
+        post.identity = self.identity['@id'];
+
+        var store = document.querySelector('maki-datastore[name=melody]');
+        store._query('/people', {
+          identity: post.identity
+        }, function(err, people) {
+          if (err) console.error('[MELODY:WRITER]', '_submit', err);
+          console.log('[MELODY:WRITER]', '_submit', people);
+          // TODO: better
+          var author = people[0];
+          post.author = author['@id'];
+          
+          console.log('DAT POST:', post);
+
+          store._post('/posts', post, function(err, post) {
+            console.log('[MELODY:WRITER]', '_submit', 'form happened', err, post);
+            if (err) {
+              self.message = data.responseText;
+              self.state = 'error';
+            } else {
+              self.removeEventListener('submit', self._submit);
+              self.replaceChild(document.createElement('melody-writer'), form);
+            }
+          });
         });
         return false;
       },

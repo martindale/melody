@@ -36,6 +36,7 @@
     "maki": "git://github.com/martindale/maki#peering",
     "maki-auth-simple": "0.1.1",
     "maki-client-level": "^0.1.0",
+    "maki-client-traverse": "^0.1.0",
     "maki-identity-mnemonic": "git://github.com/martindale/maki-identity-mnemonic#develop",
     "maki-passport-local": "0.0.4"
   },

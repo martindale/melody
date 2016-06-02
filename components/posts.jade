@@ -10,13 +10,14 @@ dom-module#melody-posts
             .right.floated
               .icon.ellipsis.vertical
             .meta
-              a(href="/people/{{item._author.slug}}") @{{item._author.name}}
+              a(href="/people/{{item.author.slug}}") @{{item.author.name}}
               |  &middot; &nbsp; 
-              a(href="/{{type.names.query}}/{{item._id}}") {{item.created}}
+              a(href="/posts/{{item._id}}") {{item.created}}
             .description {{item.content}}
           //-.extra.content
             melody-post-controls(post="{{item}}")
   script.
+    var prefix = '[MELODY:POSTS]';
     Polymer({
       is: 'melody-posts',
       listeners: {
@@ -40,24 +41,24 @@ dom-module#melody-posts
           type: Boolean
         }
       },
-      _handleQuery: function(e, key) {
+      _handleQuery: function(e, path) {
         var self = this;
 
         // disallow retrieval from remotes unless _explicitly_ allowed
-        if (!self.trusted && !key.match('^/')) {
+        if (!self.trusted && !path.match('^/')) {
           var el = document.createElement('a');
-          el.href = key;
-          key = el.pathname;
+          el.href = path;
+          path = el.pathname;
         }
 
         var datastore = document.querySelector('maki-datastore[name=melody]');
-        console.log('[MELODY:POSTS]','_handleQuery:', e, key);
-        if (!datastore) return console.error('[MELODY:POSTS]', 'no datastore');
-        datastore._retrieve(key, function(err, data) {
-          console.log('[MELODY:POSTS]', 'retrieve result:', err, data);
-          if (!data) datastore.fire('datastore:miss', key);
+        console.log(prefix, '_handleQuery:', e, path);
+        if (!datastore) return console.error(prefix, 'no datastore');
+        datastore._get(path, function(err, data) {
+          console.log(prefix, 'get result:', err, data);
+          if (!data) datastore.fire('datastore:miss', path);
           if (err) {
-            console.error('_handleQuery error:', err);
+            console.error(prefix, '_handleQuery error:', err);
             data = [];
           }
           
@@ -65,6 +66,7 @@ dom-module#melody-posts
         });
       },
       _applyState: function(e) {
+        console.log(prefix, 'event!', 'apply state call:', e);
         var self = this;
         var state = e.detail;
         
@@ -79,7 +81,7 @@ dom-module#melody-posts
         var melody = document.querySelector('melody-application');
         
         // TODO: what sets this value to http:// instead of a relative path?
-        console.log('[MELODY:POSTS]', '_sourceChanged:', source, old);
+        console.log(prefix, '_sourceChanged:', source, old);
         // TODO: merge with code in _handleQuery for `trusted` attribute
         if (source.match(/^http/i)) {
           var el = document.createElement('a');
@@ -99,21 +101,21 @@ dom-module#melody-posts
       },
       _sync: function() {
         var self = this;
-        console.log('[MELODY:POSTS]', '_sync');
+        console.log(prefix, '_sync');
         self.fire('datastore:query', self.src);
       },
       created: function() {
         var self = this;
-        console.log('[MELODY:POSTS]', 'created');
+        console.log(prefix, 'created');
       },
       ready: function() {
         var self = this;
-        console.log('[MELODY:POSTS]', 'ready');
+        console.log(prefix, 'ready');
         self.src = '/posts';
       },
       attached: function() {
         var self = this;
-        console.log('[MELODY:POSTS]', 'collection is attached:', self.src);
+        console.log(prefix, 'collection is attached:', self.src);
         var channel = document.querySelector('maki-channel');
         channel._subscribe(self.src);
       }

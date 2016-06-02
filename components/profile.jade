@@ -13,7 +13,12 @@ dom-module#melody-profile
             .value {{item.stats.posts}}
             .label posts
         .twelve.wide.column
-          melody-posts(src="/posts", filter="{ person: 'martindale' }", limit=20)
+          h3 Other Data Here (see `components/profile`)
+          code
+            pre {{_toJSON(item)}}
+          
+          //- TODO: why does this re-bind `melody-profile` to the post list?
+          //-melody-posts(src="/posts", filter="{ person: 'martindale' }", limit=20)
   script.
     Polymer({
       is: 'melody-profile',
@@ -34,12 +39,15 @@ dom-module#melody-profile
           notify: true
         }
       },
+      _toJSON: function(obj) {
+        return JSON.stringify(obj, null, '  ');
+      },
       _handleQuery: function(e, key) {
         var self = this;
         var datastore = document.querySelector('maki-datastore[name=melody]');
-        console.log('[MELODY:PROFILE]','_handleQuery:', e, key);
+        console.log('[MELODY:PROFILE]', '_handleQuery:', e, key);
         if (!datastore) return console.error('[MELODY:PROFILE]', 'no datastore');
-        datastore._retrieve(key, function(err, data) {
+        datastore._get(key, function(err, data) {
           console.log('[MELODY:PROFILE]', 'retrieve result:', err, data);
           if (!data) datastore.fire('datastore:miss', key);
           if (err) {
@@ -50,7 +58,16 @@ dom-module#melody-profile
         });
       },
       _applyState: function(e) {
-        this.item = e.detail;
+        console.log('[MELODY:PROFILE]', 'event!', 'apply state call:', e);
+      
+        var self = this;
+        var state = e.detail;
+        
+        if (state instanceof Array) {
+          state = state[0];
+        }
+
+        self.item = state;
       },
       _sourceChanged: function(source) {
         var self = this;

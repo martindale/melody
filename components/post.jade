@@ -18,6 +18,7 @@ dom-module#melody-post
       //-.extra.content
         melody-post-controls(post="{{item}}")
   script.
+    var prefix = '[MELODY:POST]';
     Polymer({
       is: 'melody-post',
       listeners: {
@@ -27,7 +28,8 @@ dom-module#melody-post
       properties: {
         src: {
           type: String,
-          observer: '_sourceChanged'
+          observer: '_sourceChanged',
+          reflectToAttribute: true
         },
         type: {
           type: Object
@@ -35,56 +37,80 @@ dom-module#melody-post
         item: {
           type: Object,
           notify: true
+        },
+        trusted: {
+          type: Boolean
         }
       },
-      _handleQuery: function(e, key) {
+      _handleQuery: function(e, path) {
         var self = this;
+
+        // disallow retrieval from remotes unless _explicitly_ allowed
+        if (!self.trusted && !path.match('^/')) {
+          var el = document.createElement('a');
+          el.href = path;
+          path = el.pathname;
+        }
+
         var datastore = document.querySelector('maki-datastore[name=melody]');
-        console.log('[MELODY:POST]','_handleQuery:', e, key);
-        if (!datastore) return console.error('[MELODY:POST]', 'no datastore');
-        datastore._retrieve(key, function(err, data) {
-          console.log('[MELODY:POST]', 'retrieve result:', err, data);
-          if (!data) datastore.fire('datastore:miss', hash);
+        console.log(prefix,'_handleQuery:', e, path);
+        if (!datastore) return console.error(prefix, 'no datastore');
+        datastore._get(path, function(err, data) {
+          console.log(prefix, 'get result:', err, data);
+          if (!data) datastore.fire('datastore:miss', path);
           if (err) {
-            console.error('_handleQuery error:', err);
+            console.error(prefix, '_handleQuery error:', err);
             data = [];
           }
+          
           self.fire('state:change', data);
         });
       },
       _applyState: function(e) {
-        this.item = e.detail;
+        var self = this;
+        var state = e.detail;
+        self.item = state;
       },
-      _sourceChanged: function(source) {
+      _sourceChanged: function(source, old) {
         var self = this;
         var melody = document.querySelector('melody-application');
-        console.log('[MELODY:POST]', '_sourceChanged:', source);
+        
+        // TODO: what sets this value to http:// instead of a relative path?
+        console.log(prefix, '_sourceChanged:', source, old);
+        // TODO: merge with code in _handleQuery for `trusted` attribute
+        if (source.match(/^http/i)) {
+          var el = document.createElement('a');
+          el.href = source;
+          self.src = el.pathname;
+          return;
+        };
         
         // TODO: _sourceChanged is firing before the application exists (is
         // attached?), requiring this check.  There are many flow optimizations
         // to be made here.
         if (melody && melody.resourceMap) {
-          //self.type = melody.resourceMap[source];
-          self.type = melody.resourceMap['/posts'];
+          self.type = melody.resourceMap[source];
         }
         
         self._sync();
       },
       _sync: function() {
         var self = this;
-        console.log('[MELODY:POST]', '_sync');
+        console.log(prefix, '_sync');
         self.fire('datastore:query', self.src);
+      },
+      created: function() {
+        var self = this;
+        console.log(prefix, 'created');
       },
       ready: function() {
         var self = this;
-        console.log('[MELODY:POST]', 'ready');
-        if (self.item) {
-          self.src = '/posts/' + self.item.slug;
-        }
+        console.log(prefix, 'ready');
+        self.src = '/posts';
       },
       attached: function() {
         var self = this;
-        console.log('[MELODY:POST]', 'collection is attached:', self.src);
+        console.log(prefix, 'collection is attached:', self.src);
         var channel = document.querySelector('maki-channel');
         channel._subscribe(self.src);
       }

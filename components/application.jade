@@ -5,9 +5,10 @@ dom-module#melody-application
     }
 
   template
-    maki-content-store
-    maki-datastore(name="melody")
+    maki-content-store(name="melody")
+    maki-datastore(name="melody", for="melody")
     maki-channel(autoconnect, reconnect, namespace="melody")
+    //-maki-service
     //-maki-peer-manager(autoconnect, limit="128", strategy="lowest-latency")
 
     .ui.page.grid
@@ -17,12 +18,14 @@ dom-module#melody-application
             a.item(href="/")
               i.icon.left(class="#{ config.service.icon || 'lab' }")
               | #{config.service.name}
-            maki-identity.right.menu(autoselect)
+            maki-identity.right.menu(for="melody", autoselect)
       .row
         .column.content(for="viewport")
           melody-index
 
   script(src="/js/page.min.js", async)
+  script(src="/assets/objectid.js", async)
+  script(src="/assets/async.min.js", async)
   script.
     window.maki = Polymer({
       is: 'melody-application',
@@ -58,6 +61,23 @@ dom-module#melody-application
         },
         state: { type: String }
       },
+      _pathToResource: function(path) {
+        var self = this;
+        var resource = null;
+        console.log('[MELODY-APPLICATION]', '_pathToResource', path);
+        for (var route in self.routes) {
+          var regex = self.routes[route];
+          console.log('[MELODY-APPLICATION]', '_pathToResource', 'testing', regex);
+          if (regex.test(path)) {
+            resource = self.resourceMap[route];
+            break;
+          }
+        }
+
+        console.log('[MELODY-APPLICATION]', '_pathToResource', path, 'finally:', resource);
+        
+        return resource;
+      },
       _route: function(ctx) {
         var self = this;
         var viewport = document.querySelector('[for=viewport]');
@@ -65,46 +85,59 @@ dom-module#melody-application
         var view = null;
         for (var route in self.routes) {
           var regex = self.routes[route];
+          console.log('[MELODY:APPLICATION]', '_route', 'routing', route, regex);
+          console.log('[MELODY:APPLICATION]', '_route', 'comparing...', ctx.path);
           if (regex.test(ctx.path)) {
             component = self.components[route];
+            console.log('[MELODY:APPLICATION]', '_route', 'found:', component);
             view = document.createElement(component);
+            view.action = self.actionMap[route];
             view.type = self.resourceMap[route];
             view.type.route = route;
+            
+            console.log('[MELODY:APPLICATION]', '_route', 'selected:', view);
             break;
           }
         }
-        
-        //console.log('[MELODY:APPLICATION]', 'settled on rendering:', view.type.route, view);
-        //console.log('[MELODY:APPLICATION]', 'type.static:', view.type.static);
-        //console.log('[MELODY:APPLICATION]', 'setting and appending...');
-        
-        //view.setAttribute('src', view.type.route);
-        view.setAttribute('src', ctx.path);
 
+        if (!view) {
+          view = document.createElement(component);
+        }
+        
+        view.setAttribute('src', ctx.path);
+        view.setAttribute('type', view.type);
         while (viewport.hasChildNodes()) {
           viewport.removeChild(viewport.lastChild);
         }
         viewport.appendChild(view);
 
       },
+      /*
+          Configures the Router, which provides human-friendly URLs 
+      
+       */
       _resourcesUpdated: function(resources) {
         var self = this;
         var _route = self._route.bind(self);
         self.resourceMap = {};
-        console.log('[MELODY:APPLICATION]', '_resourcesUpdated', resources);
+        self.actionMap = {};
         Object.keys(resources).forEach(function(name) {
-          var resource = resources[name];
-          console.log('[MELODY:APPLICATION]', 'initializing', name);
+          //var resource = resources[name];
+          var resource = document.createElement('maki-resource');
+          var definition = resources[name];
+          
+          resource.name = name;
+          resource.definition = definition;
+          
+          resource._load();
+
           ['get', 'query'].forEach(function(action) {
-            console.log('[MELODY:APPLICATION]', 'looking for', action, 'in', resource.routes);
-            var route = resource.routes[action];
+            var route = definition.routes[action];
             if (!route) return;
-
-            console.log('[MELODY:APPLICATION]', 'components are:', resource.components);
-
-            self.routes[route] = new RegExp(eval(resource.paths[action]));
-            self.components[route] = resource.components[action];
+            self.routes[route] = new RegExp(eval(definition.paths[action]));
+            self.components[route] = definition.components[action];
             self.resourceMap[route] = resource;
+            self.actionMap[route] = action;
             page(route, _route);
           });
         });
@@ -119,10 +152,9 @@ dom-module#melody-application
       },
       created: function() {
         var self = this;
-        console.log('[MELODY:APPLICATION]', 'created');
         self.route = window.location.pathname;
         //self.worker = new Worker('/worker.js');
-        
+        // load the application configuration
         $.ajax({
           type: 'OPTIONS',
           url: '/',
@@ -136,9 +168,9 @@ dom-module#melody-application
         });
       },
       ready: function() {
-        /*window.addEventListener('datastore:open', function() {
-          var datastore = document.querySelectorAll('maki-datastore')[0];
-          datastore._sync();
-        });*/
+        document.addEventListener('datastore:open', function() {
+          self.datastore = document.querySelector('maki-datastore');
+          self.datastore._sync();
+        });
       }
     });
