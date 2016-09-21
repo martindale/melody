@@ -7,6 +7,9 @@ dom-module#melody-people
             .header {{item.name}}
             .meta joined 
               abbr.tooltipped(title="{{item.created}}") {{item.created}}
+            .description
+              code
+                pre {{_toJSON(item)}}
   script.
     Polymer({
       is: 'melody-people',
@@ -27,12 +30,15 @@ dom-module#melody-people
           notify: true
         },
       },
+      _toJSON: function(obj) {
+        return JSON.stringify(obj, null, '  ');
+      },
       _handleQuery: function(e, key) {
         var self = this;
         var datastore = document.querySelector('maki-datastore[name=melody]');
         console.log('[MELODY:PEOPLE]','_handleQuery:', e, key);
         if (!datastore) return console.error('[MELODY:PEOPLE]', 'no datastore');
-        datastore._retrieve(key, function(err, data) {
+        datastore._get(key, function(err, data) {
           console.log('[MELODY:PEOPLE]', 'retrieve result:', err, data);
           if (!data) datastore.fire('datastore:miss', hash);
           if (err) {
