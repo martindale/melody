@@ -64,17 +64,17 @@ dom-module#melody-application
       _pathToResource: function(path) {
         var self = this;
         var resource = null;
-        console.log('[MELODY-APPLICATION]', '_pathToResource', path);
+        console.log('[MELODY:APPLICATION]', '_pathToResource', path);
         for (var route in self.routes) {
           var regex = self.routes[route];
-          console.log('[MELODY-APPLICATION]', '_pathToResource', 'testing', regex);
+          console.log('[MELODY:APPLICATION]', '_pathToResource', 'testing', regex);
           if (regex.test(path)) {
             resource = self.resourceMap[route];
             break;
           }
         }
 
-        console.log('[MELODY-APPLICATION]', '_pathToResource', path, 'finally:', resource);
+        console.log('[MELODY:APPLICATION]', '_pathToResource', path, 'finally:', resource);
         
         return resource;
       },
@@ -121,6 +121,9 @@ dom-module#melody-application
         var _route = self._route.bind(self);
         self.resourceMap = {};
         self.actionMap = {};
+        
+        console.log('[MELODY:APPLICATION]', '_resourcesUpdated', resources);
+        
         Object.keys(resources).forEach(function(name) {
           //var resource = resources[name];
           var resource = document.createElement('maki-resource');
@@ -153,6 +156,9 @@ dom-module#melody-application
       created: function() {
         var self = this;
         self.route = window.location.pathname;
+
+        console.log('[MELODY:APPLICATION]', 'created');
+        
         //self.worker = new Worker('/worker.js');
         // load the application configuration
         $.ajax({
@@ -162,6 +168,8 @@ dom-module#melody-application
             'Accept': 'application/json'
           },
           success: function(data) {
+            console.log('[MELODY:APPLICATION]', 'created', 'options:', data);
+            
             self.config = data.config;
             self.resources = data.resources;
           }

@@ -72,6 +72,8 @@ dom-module#melody-writer
         post._id = id;
         post.created = new Date();
         post.identity = self.identity['@id'];
+        
+        console.log('[MELODY:WRITER]', '_submit', 'seeking', self.identity, post.identity);
 
         var store = document.querySelector('maki-datastore[name=melody]');
         store._query('/people', {
