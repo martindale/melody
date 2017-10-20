@@ -33,7 +33,7 @@
     "async": "^1.5.0",
     "bitcore-lib": "^0.13.13",
     "bitcore-message": "^1.0.2",
-    "maki": "git://github.com/martindale/maki#reconcile",
+    "maki": "martindale/maki#tatami",
     "maki-auth-simple": "0.1.1",
     "maki-client-level": "^0.1.0",
     "maki-client-traverse": "^0.1.0",
